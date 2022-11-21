@@ -4,14 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Server.Models;
 
-namespace Server.DAL
+namespace Server.Context
 {
     public partial class WheresthekeyContext : DbContext
     {
-        public WheresthekeyContext()
-        {
-        }
-
         public WheresthekeyContext(DbContextOptions<WheresthekeyContext> options)
             : base(options)
         {
@@ -21,14 +17,6 @@ namespace Server.DAL
         public virtual DbSet<Place> Places { get; set; } = null!;
         public virtual DbSet<PlaceType> PlaceTypes { get; set; } = null!;
         public virtual DbSet<Reservation> Reservations { get; set; } = null!;
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Name=ConnectionStrings:WheresTheKey");
-            }
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
