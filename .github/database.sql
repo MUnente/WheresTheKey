@@ -1,5 +1,5 @@
-create database db_wheresthekey;
-use db_wheresthekey;
+create database Wheresthekey;
+use Wheresthekey;
 
 create table role (
 	id int identity(1,1) primary key,
@@ -7,8 +7,8 @@ create table role (
 );
 
 insert into role (description) values
-('Administrador'),
-('Servidor');
+('Administrator'),
+('CivilServant');
 
 create table personStatus (
 	id int identity(1, 1) primary key,
@@ -16,19 +16,20 @@ create table personStatus (
 );
 
 insert into personStatus (description) values
-('Pendente'),
-('Recusado'),
-('Aprovado'),
-('Bloqueado');
+('Pending'),
+('Refused'),
+('Approved'),
+('Blocked');
 
 create table person (
 	id varchar(12) primary key,
 	name varchar(50) not null,
-	password varchar(20) not null,
-	roleId int not null,
-	statusId int not null,
-	foreign key (roleId) references role (id),
-	foreign key (statusId) references personStatus (id)
+	password varbinary(1024) not null,
+	passwordSalt varbinary(1024) not null,
+	rolePersonId int not null,
+	accountStatusId int not null,
+	foreign key (rolePersonId) references role (id),
+	foreign key (accountStatusId) references personStatus (id)
 );
 
 create table placeType (
@@ -57,9 +58,9 @@ create table reservationStatus (
 );
 
 insert into reservationStatus (description) values
-('Pendente'),
-('Recusado'),
-('Aprovado');
+('Pending'),
+('Refused'),
+('Approved');
 
 create table reservation (
 	id int identity(1,1) primary key,
@@ -69,8 +70,4 @@ create table reservation (
 	foreign key (placeId) references place (id),
 	foreign key (personId) references person (id)
 );
-
-
-
-
 

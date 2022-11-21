@@ -12,10 +12,13 @@ namespace Server.Models
 
         public string Id { get; set; } = null!;
         public string Name { get; set; } = null!;
-        public string Password { get; set; } = null!;
-        public int RolePerson { get; set; }
-        public int AccountStatus { get; set; }
+        public byte[] Password { get; set; } = null!;
+        public byte[] PasswordSalt { get; set; } = null!;
+        public int RolePersonId { get; set; }
+        public int AccountStatusId { get; set; }
 
+        public virtual PersonStatus AccountStatus { get; set; } = null!;
+        public virtual Role RolePerson { get; set; } = null!;
         public virtual ICollection<Reservation> Reservations { get; set; }
     }
 }
