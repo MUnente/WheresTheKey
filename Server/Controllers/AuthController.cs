@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Server.Models;
 using Server.Context;
 using Server.Services;
@@ -10,12 +11,15 @@ namespace Server.Controllers
     public class AuthController : ControllerBase
     {
         private readonly WheresthekeyContext _context;
+        private readonly IConfiguration _config;
 
-        public AuthController(WheresthekeyContext context)
+        public AuthController(WheresthekeyContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
         }
 
+        [AllowAnonymous]
         [Route("Login"), HttpPost]
         public ActionResult Login([FromBody] UserLoginDto userLogin)
         {
@@ -29,7 +33,12 @@ namespace Server.Controllers
                 if (!CryptographyService.VerifyPasswordHash(userLogin.Password, person.Password, person.PasswordSalt))
                     throw new Exception("Senha incorreta.");
 
-                return Ok(person);
+                var token = new TokenService(_config).GenerateToken(person);
+
+                return Ok(new
+                {
+                    Token = token
+                });
             }
             catch (Exception ex)
             {
@@ -37,6 +46,7 @@ namespace Server.Controllers
             }
         }
 
+        [AllowAnonymous]
         [Route("Register"), HttpPost]
         public async Task<ActionResult> Register([FromBody] UserRegisterDto userRegister)
         {
@@ -59,46 +69,7 @@ namespace Server.Controllers
 
                 await _context.SaveChangesAsync();
 
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [Route("CriarMae"), HttpPost]
-        public async Task<ActionResult> MaeDeTodos()
-        {
-            try
-            {
-                CryptographyService.CreatePasswordHash("abc123", out byte[] passwordHash, out byte[] passwordSalt);
-
-                _context.People.Add(new Person
-                {
-                    Id = "cv1000000",
-                    Name = "Arlete",
-                    Password = passwordHash,
-                    PasswordSalt = passwordSalt,
-                    AccountStatusId = (int)EPersonStatus.Approved,
-                    RolePersonId = (int)ERole.Administrator
-                });
-                await _context.SaveChangesAsync();
-
-                return Ok("Arlete Criada");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [Route("TestListPeople"), HttpGet]
-        public ActionResult TestGetPeople()
-        {
-            try
-            {
-                return Ok(_context.People.ToList());
+                return Ok("Sua solicitação foi registrada com exito. O administrador fará uma análise sobre ela.");
             }
             catch (Exception ex)
             {
