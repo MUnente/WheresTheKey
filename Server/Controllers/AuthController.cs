@@ -35,6 +35,9 @@ namespace Server.Controllers
                     if (!CryptographyService.VerifyPasswordHash(userLogin.Password, person.Password, person.PasswordSalt))
                         throw new Exception("Senha incorreta.");
 
+                    if (person.AccountStatusId != (int)EPersonStatus.Approved)
+                        throw new Exception("Não foi possível permitir seu login. Sua solicitação pode estar pendente, foi reprovada ou sua conta pode ter sido bloqueada. Em caso de dúvidas, contate o Administrador.");
+
                     var token = new TokenService(_config).GenerateToken(person);
 
                     return Ok(new
