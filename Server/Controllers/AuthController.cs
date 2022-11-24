@@ -25,20 +25,27 @@ namespace Server.Controllers
         {
             try
             {
-                var person = _context.People.Where(p => p.Id == userLogin.Id).FirstOrDefault();
-
-                if (person == null)
-                    throw new Exception("Servidor não existe.");
-
-                if (!CryptographyService.VerifyPasswordHash(userLogin.Password, person.Password, person.PasswordSalt))
-                    throw new Exception("Senha incorreta.");
-
-                var token = new TokenService(_config).GenerateToken(person);
-
-                return Ok(new
+                if (ModelState.IsValid)
                 {
-                    Token = token
-                });
+                    var person = _context.People.Where(p => p.Id == userLogin.Id).FirstOrDefault();
+
+                    if (person == null)
+                        throw new Exception("Servidor não existe.");
+
+                    if (!CryptographyService.VerifyPasswordHash(userLogin.Password, person.Password, person.PasswordSalt))
+                        throw new Exception("Senha incorreta.");
+
+                    var token = new TokenService(_config).GenerateToken(person);
+
+                    return Ok(new
+                    {
+                        Token = token
+                    });
+                }
+                else
+                {
+                    return BadRequest(ModelState);
+                }
             }
             catch (Exception ex)
             {
@@ -52,24 +59,31 @@ namespace Server.Controllers
         {
             try
             {
-                if (_context.People.Where(person => person.Id == userRegister.Id).Any())
-                    throw new Exception("Servidor já existente.");
-
-                CryptographyService.CreatePasswordHash(userRegister.Password, out byte[] passwordHash, out byte[] passwordSalt);
-
-                _context.People.Add(new Person
+                if (ModelState.IsValid)
                 {
-                    Id = userRegister.Id,
-                    Name = userRegister.Name,
-                    Password = passwordHash,
-                    PasswordSalt = passwordSalt,
-                    AccountStatusId = (int)EPersonStatus.Pending,
-                    RolePersonId = (int)ERole.CivilServant
-                });
+                    if (_context.People.Where(person => person.Id == userRegister.Id).Any())
+                        throw new Exception("Servidor já existente.");
 
-                await _context.SaveChangesAsync();
+                    CryptographyService.CreatePasswordHash(userRegister.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-                return Ok("Sua solicitação foi registrada com exito. O administrador fará uma análise sobre ela.");
+                    _context.People.Add(new Person
+                    {
+                        Id = userRegister.Id,
+                        Name = userRegister.Name,
+                        Password = passwordHash,
+                        PasswordSalt = passwordSalt,
+                        AccountStatusId = (int)EPersonStatus.Pending,
+                        RolePersonId = (int)ERole.CivilServant
+                    });
+
+                    await _context.SaveChangesAsync();
+
+                    return Ok("Sua solicitação foi registrada com exito. O administrador fará uma análise sobre ela.");
+                }
+                else
+                {
+                    return BadRequest(ModelState);
+                }
             }
             catch (Exception ex)
             {
