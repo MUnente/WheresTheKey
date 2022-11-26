@@ -6,6 +6,7 @@ namespace Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class ReservationController : ControllerBase
     {
         private readonly WheresthekeyContext _context;
@@ -15,19 +16,18 @@ namespace Server.Controllers
             _context = context;
         }
 
-        [Route("GetServidores"), HttpGet]
-        [Authorize]
-        public ActionResult GetServidores()
-        {
-            return Ok($"Olá, {User.Identity.Name}! Esta é uma rota aberta para todos.");
-        }
+        // [Route("MyReservations"), HttpGet]
+        // public Action MyReservations()
+        // {
 
-        [Route("GetAdmin"), HttpGet]
-        [Authorize(Roles = "Administrator")]
-        public ActionResult GetAdmin()
-        {
-            return Ok($"Olá, chefe ({User.Identity.Name})! Esta é uma rota exclusíva apenas para administradores");
-        }
+        // }
+
+
+
+
+
+
+
 
         [Route("TestGetPeople"), HttpGet]
         public ActionResult TestGetPeople()
