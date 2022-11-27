@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Server.Models;
 using Server.Context;
 using Server.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace Server.Controllers
 {
@@ -21,13 +22,13 @@ namespace Server.Controllers
 
         [AllowAnonymous]
         [Route("Login"), HttpPost]
-        public ActionResult Login([FromBody] UserLoginDto userLogin)
+        public async Task<ActionResult> Login([FromBody] UserLoginDto userLogin)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var person = _context.People.Where(p => p.Id == userLogin.Id).FirstOrDefault();
+                    var person = await _context.People.Where(p => p.Id == userLogin.Id).FirstOrDefaultAsync();
 
                     if (person == null)
                         throw new Exception("Servidor não existe.");
@@ -64,7 +65,7 @@ namespace Server.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    if (_context.People.Where(person => person.Id == userRegister.Id).Any())
+                    if (await _context.People.Where(person => person.Id == userRegister.Id).AnyAsync())
                         throw new Exception("Servidor já existente.");
 
                     CryptographyService.CreatePasswordHash(userRegister.Password, out byte[] passwordHash, out byte[] passwordSalt);

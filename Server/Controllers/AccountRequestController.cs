@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Server.Models;
 using Server.Context;
 using Microsoft.AspNetCore.Authorization;
-using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace Server.Controllers
 {
@@ -19,11 +19,11 @@ namespace Server.Controllers
         }
 
         [Route("ListUsers"), HttpGet]
-        public ActionResult ListUsers([FromQuery] FilterUserDto filter = null)
+        public async Task<ActionResult> ListUsers([FromQuery] FilterUserDto filter = null)
         {
             try
             {
-                IEnumerable<Person> users = _context.People.ToList();
+                IEnumerable<Person> users = await _context.People.ToListAsync();
 
                 if (!String.IsNullOrEmpty(filter.Id))
                     users = users.Where(x => x.Id == filter.Id).ToList();

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Server.Models;
 using Server.Context;
 
@@ -18,11 +19,11 @@ namespace Server.Controllers
         }
 
         [Route("GetPlaces"), HttpGet]
-        public ActionResult Get()
+        public async Task<ActionResult> Get()
         {
             try
             {
-                return Ok(_context.Places.ToList());
+                return Ok(await _context.Places.ToListAsync());
             }
             catch (Exception ex)
             {

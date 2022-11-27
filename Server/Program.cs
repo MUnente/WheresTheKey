@@ -26,6 +26,9 @@ builder.Services.AddSwaggerGen(config =>
     });
 });
 
+// Enable CORS
+builder.Services.AddCors();
+
 // JWT Configuration
 var JwtSecretKey = builder.Configuration["JwtSecretKey"];
 builder.Services.AddAuthentication(x =>
@@ -58,6 +61,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(c =>
+{
+    c.AllowAnyHeader();
+    c.AllowAnyMethod();
+    c.AllowAnyOrigin();
+});
 
 app.UseHttpsRedirection();
 
