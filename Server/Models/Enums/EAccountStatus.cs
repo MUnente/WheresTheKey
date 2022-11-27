@@ -1,6 +1,6 @@
 namespace Server.Models
 {
-    public enum EPersonStatus
+    public enum EAccountStatus
     {
         Pending = 1,
         Refused = 2,

@@ -31,11 +31,21 @@ namespace Server.Controllers
         }
 
         [Route("PostPlace"), HttpPost]
-        public ActionResult Post()
+        public async Task<ActionResult> Post([FromBody] PlaceDto Place)
         {
             try
             {
-                return Ok();
+                if (ModelState.IsValid)
+                {
+                    _context.Places.Add(new Place { Description = Place.Description });
+                    await _context.SaveChangesAsync();
+
+                    return Ok("Um novo de local para Universidade foi criado.");
+                }
+                else
+                {
+                    return BadRequest(ModelState);
+                }
             }
             catch (Exception ex)
             {
@@ -43,12 +53,29 @@ namespace Server.Controllers
             }
         }
 
-        [Route("UpdatePlace"), HttpPut]
-        public ActionResult Put()
+        [Route("UpdatePlace/{id}"), HttpPut]
+        public async Task<ActionResult> Put([FromBody] PlaceDto placeDescription, [FromRoute] int id)
         {
             try
             {
-                return Ok();
+                if (ModelState.IsValid && id > 0)
+                {
+                    var Place = await _context.Places.FindAsync(id);
+
+                    if (Place == null)
+                        return NotFound("Local não encontrado.");
+
+                    Place.Description = placeDescription.Description;
+
+                    _context.Places.Update(Place);
+                    await _context.SaveChangesAsync();
+
+                    return Ok("Local atualizado com sucesso");
+                }
+                else
+                {
+                    return BadRequest("Campos do Body ou Id da URL inválidos.");
+                }
             }
             catch (Exception ex)
             {
@@ -56,12 +83,23 @@ namespace Server.Controllers
             }
         }
 
-        [Route("DeletePlace"), HttpDelete]
-        public ActionResult Delete()
+        [Route("DeletePlace/{id}"), HttpDelete]
+        public async Task<ActionResult> Delete([FromRoute] int id)
         {
             try
             {
-                return Ok();
+                if (id <= 0)
+                    throw new Exception("O Id na URL é inválido.");
+
+                var Place = await _context.Places.FindAsync(id);
+
+                if (Place == null)
+                    return NotFound("Local não encontrado.");
+
+                _context.Places.Remove(Place);
+                await _context.SaveChangesAsync();
+
+                return Ok("Local removido com sucesso.");
             }
             catch (Exception ex)
             {

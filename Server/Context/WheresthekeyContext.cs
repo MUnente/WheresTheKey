@@ -16,7 +16,6 @@ namespace Server.Context
         public virtual DbSet<Person> People { get; set; } = null!;
         public virtual DbSet<PersonStatus> PersonStatuses { get; set; } = null!;
         public virtual DbSet<Place> Places { get; set; } = null!;
-        public virtual DbSet<PlaceType> PlaceTypes { get; set; } = null!;
         public virtual DbSet<Reservation> Reservations { get; set; } = null!;
         public virtual DbSet<ReservationStatus> ReservationStatuses { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
@@ -80,25 +79,8 @@ namespace Server.Context
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.PlaceNumber).HasColumnName("placeNumber");
-
-                entity.Property(e => e.PlaceTypeId).HasColumnName("placeTypeId");
-
-                entity.HasOne(d => d.PlaceType)
-                    .WithMany(p => p.Places)
-                    .HasForeignKey(d => d.PlaceTypeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__place__placeType__412EB0B6");
-            });
-
-            modelBuilder.Entity<PlaceType>(entity =>
-            {
-                entity.ToTable("placeType");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
                 entity.Property(e => e.Description)
-                    .HasMaxLength(30)
+                    .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("description");
             });
@@ -109,6 +91,10 @@ namespace Server.Context
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.EndDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("endDate");
+
                 entity.Property(e => e.PersonId)
                     .HasMaxLength(12)
                     .IsUnicode(false)
@@ -117,6 +103,10 @@ namespace Server.Context
                 entity.Property(e => e.PlaceId).HasColumnName("placeId");
 
                 entity.Property(e => e.ReservationStatus).HasColumnName("reservationStatus");
+
+                entity.Property(e => e.StartDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("startDate");
 
                 entity.HasOne(d => d.Person)
                     .WithMany(p => p.Reservations)

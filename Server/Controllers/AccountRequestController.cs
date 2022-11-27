@@ -37,10 +37,7 @@ namespace Server.Controllers
                 if (filter.AccountStatusId != null && filter.AccountStatusId != 0)
                     users = users.Where(x => x.AccountStatusId == filter.AccountStatusId).ToList();
 
-                if (users.Count() > 0)
-                    return Ok(users);
-                else
-                    return NotFound();
+                return Ok(users);
             }
             catch (Exception ex)
             {
@@ -49,27 +46,32 @@ namespace Server.Controllers
         }
 
         [Route("UpdateUserStatus"), HttpPut]
-        public async Task<ActionResult> UpdateUserStatus([FromBody] UserChangeStatus user)
+        public async Task<ActionResult> UpdateUserStatus([FromBody] UserChangeStatusDto userToChange)
         {
             try
             {
-                if (String.IsNullOrEmpty(user.Id) || user.AccountStatusId == 0)
-                    throw new Exception("Campos inválidos.");
-
-                var users = await _context.People.FindAsync(user.Id);
-
-                if (users != null)
+                if (ModelState.IsValid && userToChange.AccountStatusId > 0)
                 {
-                    users.AccountStatusId = user.AccountStatusId;
-                    _context.People.Update(users);
-                    await _context.SaveChangesAsync();
+                    var user = await _context.People.FindAsync(userToChange.Id);
 
-                    return Ok();
+                    if (user != null)
+                    {
+                        user.AccountStatusId = userToChange.AccountStatusId;
+                        _context.People.Update(user);
+                        await _context.SaveChangesAsync();
+
+                        return Ok("O status do usuário foi atualizado com sucesso.");
+                    }
+                    else
+                    {
+                        return NotFound("Usuário não encontrado.");
+                    }
                 }
                 else
                 {
-                    return NotFound();
+                    throw new Exception("Campos inválidos.");
                 }
+
             }
             catch (Exception ex)
             {

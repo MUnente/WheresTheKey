@@ -3,6 +3,6 @@ namespace Server.Models
     public enum ERole
     {
         Administrator = 1,
-        CivilServant = 2
+        Employee = 2
     }
 }

@@ -35,7 +35,7 @@ namespace Server.Controllers
                     if (!CryptographyService.VerifyPasswordHash(userLogin.Password, person.Password, person.PasswordSalt))
                         throw new Exception("Senha incorreta.");
 
-                    if (person.AccountStatusId != (int)EPersonStatus.Approved)
+                    if (person.AccountStatusId != (int)EAccountStatus.Approved)
                         throw new Exception("Não foi possível permitir seu login. Sua solicitação pode estar pendente, foi reprovada ou sua conta pode ter sido bloqueada. Em caso de dúvidas, contate o Administrador.");
 
                     var token = new TokenService(_config).GenerateToken(person);
@@ -75,8 +75,8 @@ namespace Server.Controllers
                         Name = userRegister.Name,
                         Password = passwordHash,
                         PasswordSalt = passwordSalt,
-                        AccountStatusId = (int)EPersonStatus.Pending,
-                        RolePersonId = (int)ERole.CivilServant
+                        AccountStatusId = (int)EAccountStatus.Pending,
+                        RolePersonId = (int)ERole.Employee
                     });
 
                     await _context.SaveChangesAsync();

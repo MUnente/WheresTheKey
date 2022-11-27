@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Server.Models
 {
-    public class PlaceTypeDto
+    public class PlaceDto
     {
         [Required]
         public string Description { get; set; }

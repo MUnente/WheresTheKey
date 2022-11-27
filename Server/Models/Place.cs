@@ -11,10 +11,8 @@ namespace Server.Models
         }
 
         public int Id { get; set; }
-        public int? PlaceNumber { get; set; }
-        public int PlaceTypeId { get; set; }
+        public string Description { get; set; } = null!;
 
-        public virtual PlaceType PlaceType { get; set; } = null!;
         public virtual ICollection<Reservation> Reservations { get; set; }
     }
 }
