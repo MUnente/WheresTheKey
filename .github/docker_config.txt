@@ -1,0 +1,49 @@
+# O SCRIPT ABAIXO DEVE SER EXECUTADO MANUALMENTE, MAS ELE INTEIRO PODE SER EXECUTADO NO SEU TERMINAL (USANDO ROOT)
+
+# Sua máquina
+docker pull mcr.microsoft.com/mssql/server:2022-latest
+
+docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=Passw0rd" \
+   -p 1433:1433 --name container_mssql --hostname container_mssql \
+   -d \
+   mcr.microsoft.com/mssql/server:2022-latest
+   
+docker exec -t container_mssql cat /var/opt/mssql/log/errorlog | grep connection
+
+docker exec -it container_mssql /opt/mssql-tools/bin/sqlcmd \
+-S localhost -U SA \
+ -P "$(read -sp "Enter current SA password: "; echo "${REPLY}")" \
+ -Q "ALTER LOGIN SA WITH PASSWORD=\"$(read -sp "Enter new SA password: "; echo "${REPLY}")\""
+
+docker exec -it container_mssql "bash"
+
+# No container criado
+/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P "Passw0rd"
+
+# No SQL Server
+# Verificando qual database estamos conectados (inicialmente é para estar na Master)
+select DB_NAME();
+GO
+
+# Criando nossa database Wheresthekey
+create database Wheresthekey;
+go
+
+use Wheresthekey;
+go
+
+create table role ( id int identity(1,1) primary key, description varchar(30) not null );
+insert into role (description) values ('Administrator'), ('Employee');
+create table personStatus ( id int identity(1, 1) primary key, description varchar(30) not null );
+insert into personStatus (description) values ('Pending'), ('Refused'), ('Approved'), ('Blocked');
+create table person ( id varchar(12) primary key, name varchar(50) not null, password varbinary(1024) not null, passwordSalt varbinary(1024) not null, rolePersonId int not null, accountStatusId int not null, foreign key (rolePersonId) references role (id), foreign key (accountStatusId) references personStatus (id) );
+create table place ( id int identity(1,1) primary key, description varchar(50) not null );
+create table reservationStatus ( id int identity(1,1) primary key, description varchar(30) not null );
+insert into reservationStatus (description) values ('Pending'), ('Refused'), ('Approved');
+create table reservation ( id int identity(1,1) primary key, placeId int not null, personId varchar(12) not null, startDate Datetime not null, endDate Datetime not null, reservationStatus int not null, foreign key (placeId) references place (id), foreign key (personId) references person (id) );
+GO
+
+# Verificando se todas as tabelas foram criadas (deve ser exibido 7 tabelas)
+select table_name FROM Wheresthekey.information_schema.tables;
+go
+

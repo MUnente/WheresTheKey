@@ -8,7 +8,7 @@ create table role (
 
 insert into role (description) values
 ('Administrator'),
-('CivilServant');
+('Employee');
 
 create table personStatus (
 	id int identity(1, 1) primary key,
@@ -32,24 +32,9 @@ create table person (
 	foreign key (accountStatusId) references personStatus (id)
 );
 
-create table placeType (
-	id int identity(1,1) primary key,
-	description varchar(30) not null
-);
-
-insert into placeType (description) values
-('Laboratório de Informática'),
-('Laboratório de Química'),
-('Laboratório de Robótica'),
-('Laboratório de Física'),
-('Sala de aula'),
-('Auditório');
-
 create table place (
 	id int identity(1,1) primary key,
-	placeNumber int null,
-	placeTypeId int not null,
-	foreign key (placeTypeId) references placeType (id)
+	description varchar(50) not null
 );
 
 create table reservationStatus (
@@ -66,6 +51,8 @@ create table reservation (
 	id int identity(1,1) primary key,
 	placeId int not null,
 	personId varchar(12) not null,
+	startDate Datetime not null,
+	endDate Datetime not null,
 	reservationStatus int not null,
 	foreign key (placeId) references place (id),
 	foreign key (personId) references person (id)
