@@ -28,7 +28,7 @@ namespace Server.Controllers
                 string userId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
 
                 if (String.IsNullOrEmpty(userId))
-                    return Unauthorized("Ocorreu um erro na sua autenticação. Por favor, faça o login novamente. Se o erro persistir, contate o suporte.");
+                    return Unauthorized(new { Message = "Ocorreu um erro na sua autenticação. Por favor, faça o login novamente. Se o erro persistir, contate o suporte." });
 
                 var reservations = await _context.Reservations.Where(r => r.PersonId == userId).ToListAsync();
 
@@ -36,7 +36,7 @@ namespace Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
             }
         }
 
@@ -73,7 +73,10 @@ namespace Server.Controllers
                     _context.Reservations.Add(reservation);
                     await _context.SaveChangesAsync();
 
-                    return Ok("Sua reserva foi registrada com sucesso. O Administrador irá analisa-la para saber se está de acordo.");
+                    return Ok(new
+                    {
+                        Message = "Sua reserva foi registrada com sucesso. O Administrador irá analisa-la para saber se está de acordo."
+                    });
                 }
                 else
                 {
@@ -82,7 +85,7 @@ namespace Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
             }
         }
         #endregion
@@ -100,7 +103,7 @@ namespace Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
             }
         }
 
@@ -113,7 +116,7 @@ namespace Server.Controllers
                 var reservation = await _context.Reservations.Where(r => r.Id == reservationToChange.Id).FirstOrDefaultAsync();
 
                 if (reservation == null)
-                    return NotFound("Reserva não encontrada.");
+                    return NotFound(new { Message = "Reserva não encontrada." });
 
                 CustomModel placeIsAvailable = await PlaceIsAvailable(reservation.PlaceId, reservation.StartDate, reservation.EndDate);
 
@@ -125,11 +128,11 @@ namespace Server.Controllers
                 _context.Reservations.Update(reservation);
                 await _context.SaveChangesAsync();
 
-                return Ok("Reserva atualizada com sucesso.");
+                return Ok(new { Message = "Reserva atualizada com sucesso." });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
             }
         }
 
@@ -142,16 +145,16 @@ namespace Server.Controllers
                 var reservation = await _context.Reservations.Where(r => r.Id == reservationId).FirstOrDefaultAsync();
 
                 if (reservation == null)
-                    return NotFound("Reserva não encontrada.");
+                    return NotFound(new { Message = "Reserva não encontrada." });
 
                 _context.Reservations.Remove(reservation);
                 await _context.SaveChangesAsync();
 
-                return Ok("Reserva excluída com sucesso.");
+                return Ok(new { Message = "Reserva excluída com sucesso." });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
             }
         }
         #endregion

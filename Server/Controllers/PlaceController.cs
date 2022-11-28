@@ -27,7 +27,7 @@ namespace Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
             }
         }
 
@@ -41,7 +41,7 @@ namespace Server.Controllers
                     _context.Places.Add(new Place { Description = Place.Description });
                     await _context.SaveChangesAsync();
 
-                    return Ok("Um novo de local para Universidade foi criado.");
+                    return Ok(new { Message = "Um novo de local para Universidade foi criado." });
                 }
                 else
                 {
@@ -50,7 +50,7 @@ namespace Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
             }
         }
 
@@ -64,23 +64,23 @@ namespace Server.Controllers
                     var Place = await _context.Places.FindAsync(id);
 
                     if (Place == null)
-                        return NotFound("Local não encontrado.");
+                        return NotFound(new { Message = "Local não encontrado." });
 
                     Place.Description = placeDescription.Description;
 
                     _context.Places.Update(Place);
                     await _context.SaveChangesAsync();
 
-                    return Ok("Local atualizado com sucesso");
+                    return Ok(new { Message = "Local atualizado com sucesso" });
                 }
                 else
                 {
-                    return BadRequest("Campos do Body ou Id da URL inválidos.");
+                    return BadRequest(new { Message = "Campos do Body ou Id da URL inválidos." });
                 }
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
             }
         }
 
@@ -95,16 +95,16 @@ namespace Server.Controllers
                 var Place = await _context.Places.FindAsync(id);
 
                 if (Place == null)
-                    return NotFound("Local não encontrado.");
+                    return NotFound(new { Message = "Local não encontrado." });
 
                 _context.Places.Remove(Place);
                 await _context.SaveChangesAsync();
 
-                return Ok("Local removido com sucesso.");
+                return Ok(new { Message = "Local removido com sucesso." });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
             }
         }
     }

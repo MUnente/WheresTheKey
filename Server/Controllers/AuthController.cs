@@ -28,7 +28,7 @@ namespace Server.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var person = await _context.People.Where(p => p.Id == userLogin.Id).FirstOrDefaultAsync();
+                    var person = await _context.People.FindAsync(userLogin.Id);
 
                     if (person == null)
                         throw new Exception("Servidor não existe.");
@@ -41,10 +41,7 @@ namespace Server.Controllers
 
                     var token = new TokenService(_config).GenerateToken(person);
 
-                    return Ok(new
-                    {
-                        Token = token
-                    });
+                    return Ok(new { Token = token, Role = person.RolePersonId });
                 }
                 else
                 {
@@ -53,7 +50,7 @@ namespace Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
             }
         }
 
@@ -82,7 +79,10 @@ namespace Server.Controllers
 
                     await _context.SaveChangesAsync();
 
-                    return Ok("Sua solicitação foi registrada com exito. O administrador fará uma análise sobre ela.");
+                    return Ok(new
+                    {
+                        Message = "Sua solicitação foi registrada com exito. O administrador fará uma análise sobre ela."
+                    });
                 }
                 else
                 {
@@ -91,7 +91,7 @@ namespace Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
             }
         }
     }

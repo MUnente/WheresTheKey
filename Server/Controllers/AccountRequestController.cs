@@ -41,7 +41,7 @@ namespace Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
             }
         }
 
@@ -60,11 +60,11 @@ namespace Server.Controllers
                         _context.People.Update(user);
                         await _context.SaveChangesAsync();
 
-                        return Ok("O status do usuário foi atualizado com sucesso.");
+                        return Ok(new { Message = "O status do usuário foi atualizado com sucesso." });
                     }
                     else
                     {
-                        return NotFound("Usuário não encontrado.");
+                        return NotFound(new { Message = "Usuário não encontrado." });
                     }
                 }
                 else
@@ -75,7 +75,7 @@ namespace Server.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = ex.Message });
             }
         }
     }
