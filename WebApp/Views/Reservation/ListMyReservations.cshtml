@@ -1,0 +1,39 @@
+@using WebApp.Models
+
+@model IEnumerable<WebApp.Models.Reservation>
+@{
+    ViewData["Title"] = "Minhas Reservas";
+}
+
+<section class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Id do Local</th>
+                <th scope="col">Data de Inicio</th>
+                <th scope="col">Data de Término</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                @foreach (var reservation in Model)
+                {
+                    <tr>
+                        <td class="align-middle text-center">@reservation.placeId</td>
+                        <td class="align-middle text-center">@reservation.startDate</td>
+                        <td class="align-middle text-center">@reservation.endDate</td>
+                        <td class="align-middle text-center">@reservation.reservationStatus</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td>Empty List</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
