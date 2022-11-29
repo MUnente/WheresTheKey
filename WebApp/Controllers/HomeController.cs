@@ -10,6 +10,7 @@ namespace WebApp.Controllers
     {
         public IActionResult Index()
         {
+            ViewBag.RoleUser = HttpContext.Session.GetInt32("_Role");
             return View();
         }
     }

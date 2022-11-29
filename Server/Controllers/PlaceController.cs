@@ -54,14 +54,14 @@ namespace Server.Controllers
             }
         }
 
-        [Route("UpdatePlace/{id}"), HttpPut]
-        public async Task<ActionResult> Put([FromBody] PlaceDto placeDescription, [FromRoute] int id)
+        [Route("UpdatePlace"), HttpPut]
+        public async Task<ActionResult> Put([FromBody] PlaceDto placeDescription)
         {
             try
             {
-                if (ModelState.IsValid && id > 0)
+                if (ModelState.IsValid)
                 {
-                    var Place = await _context.Places.FindAsync(id);
+                    var Place = await _context.Places.FindAsync(placeDescription.Id);
 
                     if (Place == null)
                         return NotFound(new { Message = "Local não encontrado." });
@@ -75,7 +75,7 @@ namespace Server.Controllers
                 }
                 else
                 {
-                    return BadRequest(new { Message = "Campos do Body ou Id da URL inválidos." });
+                    return BadRequest(new { Message = "Campos do Body inválidos." });
                 }
             }
             catch (Exception ex)

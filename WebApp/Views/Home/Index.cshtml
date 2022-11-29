@@ -1,5 +1,79 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using WebApp.Models
+
+@{
+    ViewData["Title"] = "Menu";
 }
 
-<h1>MENUZINHO</h1>
+<style>
+    body { 
+        padding-top:20px;
+    }
+
+    .panel-body .btn:not(.btn-block) {
+        width:120px;
+        margin-bottom:10px;
+    }
+</style>
+
+<section id="reservationSection">
+    <h2>Reservas</h2>
+    <div class="container text-center">
+        <div class="row">
+            <a class="btn btn-primary col w-50" href="#">
+                Minhas Reservas
+            </a>
+            <a class="btn btn-warning col w-50" href="#">
+                Criar uma reserva
+            </a>
+        </div>
+    </div>
+
+    @if (ViewBag.RoleUser == (int)ERole.Administrator)
+    {
+        <div class="mt-3">
+            <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseComponent" aria-expanded="false" aria-controls="collapseComponent">
+                Opções Admin
+            </button>
+            <div class="collapse mt-1" id="collapseComponent">
+                <div class="container text-center">
+                    <div class="row">
+                        <a class="btn btn-info col" href="#">
+                            Listar reservas
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</section>
+
+@if (ViewBag.RoleUser == (int)ERole.Administrator)
+{
+    <hr />
+
+    <section id="accountRequestsSection">
+        <h2>Solicitações de usuários</h2>
+
+        <div class="container text-center">
+            <div class="row">
+                <a class="btn btn-info col w-50" href="#">
+                    Listar usuários
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <hr />
+
+    <section id="placesSection">
+        <h2>Locais</h2>
+
+        <div class="container text-center">
+            <div class="row">
+                <a class="btn btn-info col w-50" href="/Place/Index">
+                    Listar locais
+                </a>
+            </div>
+        </div>
+    </section>
+}
