@@ -1,0 +1,60 @@
+@using WebApp.Models
+
+@model IEnumerable<WebApp.Models.UserChangeStatus>
+@{
+    ViewData["Title"] = "Locais";
+}
+
+<section class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Função</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td class="align-middle">@user.id</td>
+                        <td class="align-middle">@user.name</td>
+                        <td class="align-middle text-center">@user.rolePersonId</td>
+                        <td class="align-middle text-center">
+                            <select class="form-select" name="accountStatusId" onchange="updateStatus(this, '@user.id')">
+                                <option value="1" @(user.accountStatusId == 1 ? "selected" : "")>Pendente</option>
+                                <option value="2" @(user.accountStatusId == 2 ? "selected" : "")>Recusado</option>
+                                <option value="3" @(user.accountStatusId == 3 ? "selected" : "")>Aprovado</option>
+                                <option value="4" @(user.accountStatusId == 4 ? "selected" : "")>Bloqueado</option>
+                            </select>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td>Empty List</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    function updateStatus(element, id) {
+        $.ajax({
+            url: `${window.location.origin}/AccountRequests/UpdateStatus`,
+            data: { id: id, accountStatusId: element.value }
+        }).done(function (data) {
+            console.log(data);
+        }).fail(function (error) {
+            console.log(error);
+        });
+    }
+</script>
